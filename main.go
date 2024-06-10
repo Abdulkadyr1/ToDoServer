@@ -1,14 +1,12 @@
 package main
 
 import (
+	"ToDo/handlers"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, Echo!")
-	})
+	e.GET("/tasks", handlers.GetTasks)
 	e.Start(":8080")
 }
