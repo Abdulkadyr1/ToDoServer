@@ -27,11 +27,29 @@ func PostTasks(c echo.Context) error {
 			"message": "Invalid request body",
 		})
 	}
-	fmt.Print(c)
+	fmt.Printf("%s", tasks)
 	//newTask := models.Task{Id: 11, Title: "aaa", Description: "bbb", CreatedAt: time.Now(), UpdatedAt: time.Now()}
 	result := config.DB.Create(tasks)
 	if result.Error != nil {
 		log.Fatal("Failed to create new task")
 	}
+	return nil
+}
+
+func UpdateTasks(c echo.Context) error {
+	id := c.Param("id")
+	var task models.Task
+	result := config.DB.First(&task, id)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Failed to find task",
+		})
+	}
+	if c.Bind(&task) != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"message": "Invalid request body",
+		})
+	}
+	config.DB.Save(&task)
 	return nil
 }
