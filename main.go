@@ -25,6 +25,7 @@ func main() {
 	e.GET("/tasks", handlers.GetTasks)
 	e.POST("/tasks", handlers.PostTasks)
 	e.PUT("/tasks/:id", handlers.UpdateTasks)
+	e.DELETE("tasks/:id", handlers.DeleteTasks)
 	err = e.Start(":8080")
 	if err != nil {
 		log.Fatal("Error starting server:")

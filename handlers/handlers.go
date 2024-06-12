@@ -53,3 +53,16 @@ func UpdateTasks(c echo.Context) error {
 	config.DB.Save(&task)
 	return nil
 }
+
+func DeleteTasks(c echo.Context) error {
+	id := c.Param("id")
+	var task models.Task
+	result := config.DB.First(&task, id)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Failed to find task",
+		})
+	}
+	config.DB.Delete(&task)
+	return nil
+}
