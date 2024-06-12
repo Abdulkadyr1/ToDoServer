@@ -5,39 +5,33 @@ import (
 	"ToDo/models"
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
-	"time"
+	"net/http"
 )
 
 func GetTasks(c echo.Context) error {
-	db, err := gorm.Open(postgres.Open(config.Dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Failed to connect to database")
-	}
 	var tasks []models.Task
-	db.Find(&tasks)
-	fmt.Println(tasks)
-	return nil
+	result := config.DB.Find(&tasks)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Failed to retrieve tasks",
+		})
+	}
+	return c.JSON(http.StatusOK, tasks)
 }
 
 func PostTasks(c echo.Context) error {
-	db, err := gorm.Open(postgres.Open(config.Dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Failed to connect to database")
+	tasks := new(models.Task)
+	if c.Bind(tasks) != nil {
+		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
+			"message": "Invalid request body",
+		})
 	}
-	err = db.AutoMigrate(models.Task{})
-	if err != nil {
-		log.Fatal("Failed to migrate database")
-	}
-	newTask := models.Task{Id: 11, Title: "aaa", Description: "bbb", CreatedAt: time.Now(), UpdatedAt: time.Now()}
-	result := db.Create(&newTask)
+	fmt.Print(c)
+	//newTask := models.Task{Id: 11, Title: "aaa", Description: "bbb", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	result := config.DB.Create(tasks)
 	if result.Error != nil {
 		log.Fatal("Failed to create new task")
 	}
-	var tasks []models.Task
-	db.Find(&tasks)
-	fmt.Println(tasks)
 	return nil
 }
