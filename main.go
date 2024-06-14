@@ -22,11 +22,11 @@ func main() {
 	}
 	config.DB = db
 	e := echo.New()
-	get := &handlers.TasksHandler{}
-	e.GET("/tasks", get.GetAll)
-	e.POST("/tasks", handlers.PostTasks)
-	e.PUT("/tasks/:id", handlers.UpdateTasks)
-	e.DELETE("tasks/:id", handlers.DeleteTasks)
+	TaskHandler := &handlers.TasksHandler{}
+	e.GET("/tasks", TaskHandler.GetAll)
+	e.POST("/tasks", TaskHandler.Post)
+	e.PUT("/tasks/:id", TaskHandler.Update)
+	e.DELETE("tasks/:id", TaskHandler.Delete)
 	err = e.Start(":8080")
 	if err != nil {
 		log.Fatal("Error starting server:")

@@ -1,12 +1,8 @@
 package handlers
 
 import (
-	"ToDo/config"
 	"ToDo/repository"
-	"ToDo/tasks"
-	"fmt"
 	"github.com/labstack/echo/v4"
-	"log"
 	"net/http"
 )
 
@@ -14,8 +10,8 @@ type TasksHandler struct {
 	repo repository.TaskRepositoryImpl
 }
 
-func (task *TasksHandler) GetAll(c echo.Context) error {
-	err := task.repo.GetTasks(c)
+func (handler *TasksHandler) GetAll(c echo.Context) error {
+	err := handler.repo.GetTasks(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error getting tasks",
@@ -26,49 +22,38 @@ func (task *TasksHandler) GetAll(c echo.Context) error {
 	})
 }
 
-func PostTasks(c echo.Context) error {
-	tasks := new(tasks.Task)
-	if c.Bind(tasks) != nil {
-		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
-			"message": "Invalid request body",
+func (handler *TasksHandler) Post(c echo.Context) error {
+	err := handler.repo.PostTasks(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error posting tasks",
 		})
 	}
-	fmt.Printf("%s", tasks)
-	//newTask := tasks.Task{Id: 11, Title: "aaa", Description: "bbb", CreatedAt: time.Now(), UpdatedAt: time.Now()}
-	result := config.DB.Create(tasks)
-	if result.Error != nil {
-		log.Fatal("Failed to create new task")
-	}
-	return nil
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OK",
+	})
 }
 
-func UpdateTasks(c echo.Context) error {
-	id := c.Param("id")
-	var task tasks.Task
-	result := config.DB.First(&task, id)
-	if result.Error != nil {
+func (handler *TasksHandler) Update(c echo.Context) error {
+	err := handler.repo.UpdateTasks(c)
+	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": "Failed to find task",
+			"message": "Error updating tasks",
 		})
 	}
-	if c.Bind(&task) != nil {
-		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
-			"message": "Invalid request body",
-		})
-	}
-	config.DB.Save(&task)
-	return nil
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OK",
+	})
 }
 
-func DeleteTasks(c echo.Context) error {
-	id := c.Param("id")
-	var task tasks.Task
-	result := config.DB.First(&task, id)
-	if result.Error != nil {
+func (handler *TasksHandler) Delete(c echo.Context) error {
+	err := handler.repo.DeleteTasks(c)
+	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": "Failed to find task",
+			"message": "Error deleting tasks",
 		})
 	}
-	config.DB.Delete(&task)
-	return nil
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OK",
+	})
 }
