@@ -3,7 +3,7 @@ package main
 import (
 	"ToDo/config"
 	"ToDo/handlers"
-	"ToDo/models"
+	"ToDo/tasks"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,13 +16,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
-	err = db.AutoMigrate(models.Task{})
+	err = db.AutoMigrate(tasks.Task{})
 	if err != nil {
 		log.Fatal("Failed to migrate database")
 	}
 	config.DB = db
 	e := echo.New()
-	e.GET("/tasks", handlers.GetTasks)
+	get := &handlers.TasksHandler{}
+	e.GET("/tasks", get.GetAll)
 	e.POST("/tasks", handlers.PostTasks)
 	e.PUT("/tasks/:id", handlers.UpdateTasks)
 	e.DELETE("tasks/:id", handlers.DeleteTasks)
