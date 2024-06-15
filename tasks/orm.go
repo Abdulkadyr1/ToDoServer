@@ -5,9 +5,9 @@ import (
 )
 
 type Task struct {
-	ID          uint      `json:"id" grom:"primary_key"`
-	Title       string    `json:"title" gorm:"type:varchar(255)"`
-	Description string    `json:"description" gorm:"type:varchar(255)"`
-	CreatedAt   time.Time `json:"created_at" gorm:"type:datetime"`
-	UpdatedAt   time.Time `json:"updated_at" gorm:"type:datetime"`
+	ID          uint      `json:"id" `
+	Title       string    `json:"title" `
+	Description string    `json:"description" `
+	CreatedAt   time.Time `json:"created_at" `
+	UpdatedAt   time.Time `json:"updated_at" `
 }

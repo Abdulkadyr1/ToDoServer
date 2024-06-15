@@ -1,41 +1,56 @@
 package handlers
 
 import (
-	"ToDo/repository"
+	"ToDo/tasks"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 type TasksHandler struct {
-	repo repository.TaskRepositoryImpl
+	service tasks.ServiceTask
 }
 
-func (handler *TasksHandler) GetAll(c echo.Context) error {
-	err := handler.repo.GetTasks(c)
+func (handler *TasksHandler) GetAllTasks(c echo.Context) error {
+	result, err := handler.service.GetAllTasks()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error getting tasks",
 		})
 	}
-	return c.JSON(http.StatusOK, echo.Map{
-		"message": "OK",
-	})
+	return c.JSON(http.StatusOK, result)
 }
 
-func (handler *TasksHandler) Post(c echo.Context) error {
-	err := handler.repo.PostTasks(c)
+func (handler *TasksHandler) PostTask(c echo.Context) error {
+	task := &tasks.Task{}
+	if err := c.Bind(task); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error parsing task",
+		})
+	}
+	err := handler.service.CreateTask(task)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error posting tasks",
 		})
 	}
-	return c.JSON(http.StatusOK, echo.Map{
-		"message": "OK",
-	})
+	return c.JSON(http.StatusCreated, task)
 }
 
-func (handler *TasksHandler) Update(c echo.Context) error {
-	err := handler.repo.UpdateTasks(c)
+func (handler *TasksHandler) UpdateTask(c echo.Context) error {
+	task := &tasks.Task{}
+	if err := c.Bind(task); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error parsing task",
+		})
+	}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error parsing task id",
+		})
+	}
+	err = handler.service.UpdateTask(task, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error updating tasks",
@@ -46,14 +61,20 @@ func (handler *TasksHandler) Update(c echo.Context) error {
 	})
 }
 
-func (handler *TasksHandler) Delete(c echo.Context) error {
-	err := handler.repo.DeleteTasks(c)
+func (handler *TasksHandler) DeleteTask(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error parsing task id",
+		})
+	}
+	err = handler.service.DeleteTask(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error deleting tasks",
 		})
 	}
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "OK",
+		"message": "DELETE SUCCESSFUL",
 	})
 }

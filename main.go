@@ -23,10 +23,10 @@ func main() {
 	config.DB = db
 	e := echo.New()
 	TaskHandler := &handlers.TasksHandler{}
-	e.GET("/tasks", TaskHandler.GetAll)
-	e.POST("/tasks", TaskHandler.Post)
-	e.PUT("/tasks/:id", TaskHandler.Update)
-	e.DELETE("tasks/:id", TaskHandler.Delete)
+	e.GET("/tasks", TaskHandler.GetAllTasks)
+	e.POST("/tasks", TaskHandler.PostTask)
+	e.PUT("/tasks/:id", TaskHandler.UpdateTask)
+	e.DELETE("tasks/:id", TaskHandler.DeleteTask)
 	err = e.Start(":8080")
 	if err != nil {
 		log.Fatal("Error starting server:")
