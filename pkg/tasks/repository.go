@@ -1,7 +1,7 @@
 package tasks
 
 import (
-	"ToDo/config"
+	"ToDo/internal/config"
 )
 
 type TaskRepository interface {

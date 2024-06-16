@@ -1,9 +1,8 @@
 package main
 
 import (
-	"ToDo/config"
-	"ToDo/handlers"
-	"ToDo/tasks"
+	"ToDo/internal/config"
+	"ToDo/pkg/tasks"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,7 +21,7 @@ func main() {
 	}
 	config.DB = db
 	e := echo.New()
-	TaskHandler := &handlers.TasksHandler{}
+	TaskHandler := &tasks.TasksHandler{}
 	e.GET("/tasks", TaskHandler.GetAllTasks)
 	e.POST("/tasks", TaskHandler.PostTask)
 	e.PUT("/tasks/:id", TaskHandler.UpdateTask)

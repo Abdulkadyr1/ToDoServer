@@ -1,14 +1,13 @@
-package handlers
+package tasks
 
 import (
-	"ToDo/tasks"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
 type TasksHandler struct {
-	service tasks.ServiceTask
+	service ServiceTask
 }
 
 func (handler *TasksHandler) GetAllTasks(c echo.Context) error {
@@ -22,7 +21,7 @@ func (handler *TasksHandler) GetAllTasks(c echo.Context) error {
 }
 
 func (handler *TasksHandler) PostTask(c echo.Context) error {
-	task := &tasks.Task{}
+	task := &Task{}
 	if err := c.Bind(task); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error parsing task",
@@ -38,7 +37,7 @@ func (handler *TasksHandler) PostTask(c echo.Context) error {
 }
 
 func (handler *TasksHandler) UpdateTask(c echo.Context) error {
-	task := &tasks.Task{}
+	task := &Task{}
 	if err := c.Bind(task); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Error parsing task",
